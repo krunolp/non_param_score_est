@@ -1,0 +1,12 @@
+numpy
+matplotlib
+pandas
+scipy
+jaxlib
+jax
+flax
+optax
+dm-haiku
+jaxtyping
+tensorflow-probability
+pytest
