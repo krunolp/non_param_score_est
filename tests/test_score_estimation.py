@@ -7,12 +7,12 @@ import unittest
 import warnings
 import numpy as np
 
-from score_estimation.ssge import SSGE
-from score_estimation.nu_method import NuMethod
-from score_estimation.kde import KDE
-from score_estimation.landweber import Landweber
-from score_estimation.tikhonov import Tikhonov
-from score_estimation.abstract import GramMatrixMixin
+from score_estimation.estimators.ssge import SSGE
+from score_estimation.estimators.nu_method import NuMethod
+from score_estimation.estimators.kde import KDE
+from score_estimation.estimators.landweber import Landweber
+from score_estimation.estimators.tikhonov import Tikhonov
+from score_estimation.estimators.abstract import GramMatrixMixin
 
 
 class TestGramMatrixMixin(unittest.TestCase):

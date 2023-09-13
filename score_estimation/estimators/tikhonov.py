@@ -8,8 +8,8 @@ import jax.numpy as jnp
 import haiku as hk
 
 from typing import Optional
-from score_estimation.matrix_kernels import CurlFreeIMQKernel, CurlFreeSEKernel
-from score_estimation.abstract import AbstractScoreEstimator
+from score_estimation.matrix_kernels.curlfree_kernel import CurlFreeIMQKernel, CurlFreeSEKernel
+from score_estimation.estimators.abstract import AbstractScoreEstimator
 from score_estimation.matrix_kernels.utils import random_choice, conjugate_gradient
 
 

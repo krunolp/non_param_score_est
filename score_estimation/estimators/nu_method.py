@@ -2,8 +2,8 @@ import jax
 import jax.numpy as jnp
 
 from typing import Optional, Union, Tuple
-from score_estimation.matrix_kernels import CurlFreeIMQKernel, CurlFreeSEKernel
-from score_estimation.abstract import AbstractScoreEstimator
+from score_estimation.matrix_kernels.curlfree_kernel import CurlFreeIMQKernel, CurlFreeSEKernel
+from score_estimation.estimators.abstract import AbstractScoreEstimator
 
 
 class NuMethod(AbstractScoreEstimator):

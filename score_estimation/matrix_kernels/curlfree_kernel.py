@@ -2,7 +2,7 @@ import jax
 
 from typing import Optional, Tuple
 from jax import numpy as jnp
-from . import SquareCurlFreeKernel
+from score_estimation.matrix_kernels.abstract import SquareCurlFreeKernel
 from .utils import median_heuristic
 
 
