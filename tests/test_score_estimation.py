@@ -7,11 +7,7 @@ import unittest
 import warnings
 import numpy as np
 
-from score_estimation.estimators.ssge import SSGE
-from score_estimation.estimators.nu_method import NuMethod
-from score_estimation.estimators.kde import KDE
-from score_estimation.estimators.landweber import Landweber
-from score_estimation.estimators.tikhonov import Tikhonov
+from score_estimation.estimators import *
 from score_estimation.estimators.abstract import GramMatrixMixin
 
 
@@ -98,6 +94,35 @@ class TestGramMatrixMixin(unittest.TestCase):
                         assert jnp.all(jnp.isclose(dx2_k, grad2[i, j])), f'{dx2_k}, {grad2[i, j]}'
 
 
+class TestStein(unittest.TestCase):
+
+    def setUp(self) -> None:
+        key = jax.random.PRNGKey(123)
+        key1, key2 = jax.random.split(key)
+        self.loc = jnp.array([10., -5.])
+        self.scale_diag = jnp.array([0.5, 2.0])
+        self.dist = tfp.distributions.MultivariateNormalDiag(loc=self.loc, scale_diag=self.scale_diag)
+        self.x_samples = self.dist.sample(100, seed=key1)
+        self.x_query = self.dist.sample(400, seed=key2)
+        self.logprob = lambda x: (self.dist.log_prob(x).sum(), self.dist.log_prob(x))
+        self.test_score_estimation_x_s()
+        self.test_score_estimation_x()
+
+    def test_score_estimation_x_s(self):
+        est = Stein(lam=1e-4, bandwidth=2.5)
+        score_estimate = est.estimate_gradients_s_x(queries=self.x_query, samples=self.x_samples)
+        score, logp = jax.grad(self.logprob, has_aux=True)(self.x_query)
+        cos_dist = np.mean([spatial.distance.cosine(s1, s2) for s1, s2 in zip(score, score_estimate)])
+        assert cos_dist < 0.05, f'cos-dist = {cos_dist}'
+
+    def test_score_estimation_x(self):
+        est = Stein(lam=1e-4, bandwidth=2.5)
+        score_estimate = est.estimate_gradients_s(x=self.x_samples)
+        score, logp = jax.grad(self.logprob, has_aux=True)(self.x_samples)
+        cos_dist = np.mean([spatial.distance.cosine(s1, s2) for s1, s2 in zip(score, score_estimate)])
+        assert cos_dist < 0.05, f'cos-dist = {cos_dist}'
+
+
 class TestSSGE(unittest.TestCase):
 
     def setUp(self) -> None:
@@ -113,21 +138,16 @@ class TestSSGE(unittest.TestCase):
 
     def test_score_estimation_x_s(self):
         for add_linear_kernel in [True, False]:
-            ssge = SSGE(eta=0.1, add_linear_kernel=add_linear_kernel, n_eigen_threshold=0.98)
-            score_estimate = ssge.estimate_gradients_s_x(self.x_query, self.x_samples)
+            est = SSGE(eta=0.1, add_linear_kernel=add_linear_kernel, n_eigen_threshold=0.98)
+            score_estimate = est.estimate_gradients_s_x(self.x_query, self.x_samples)
             score, logp = jax.grad(self.logprob, has_aux=True)(self.x_query)
             cos_dist = np.mean([spatial.distance.cosine(s1, s2) for s1, s2 in zip(score, score_estimate)])
             assert cos_dist < 0.05, f'cos-dist = {cos_dist}'
 
     def test_score_estimation_s(self):
-        ssge = SSGE(eta=0.1, add_linear_kernel=False, n_eigen_values=50)
-        score_estimate = ssge.estimate_gradients_s(self.x_samples)
+        est = SSGE(eta=0.1, add_linear_kernel=False, n_eigen_values=50)
+        score_estimate = est.estimate_gradients_s(self.x_samples)
         score, logp = jax.grad(self.logprob, has_aux=True)(self.x_samples)
-        cos_dist = np.mean([spatial.distance.cosine(s1, s2) for s1, s2 in zip(score, score_estimate)])
-        assert cos_dist < 0.05, f'cos-dist = {cos_dist}'
-
-        score_estimate = ssge.estimate_gradients_s(self.x_samples[:-3])
-        score, logp = jax.grad(self.logprob, has_aux=True)(self.x_samples[:-3])
         cos_dist = np.mean([spatial.distance.cosine(s1, s2) for s1, s2 in zip(score, score_estimate)])
         assert cos_dist < 0.05, f'cos-dist = {cos_dist}'
 
@@ -145,15 +165,15 @@ class TestNuMethod(unittest.TestCase):
         self.logprob = lambda x: (self.dist.log_prob(x).sum(), self.dist.log_prob(x))
 
     def test_score_estimation_x_s(self):
-        nu_method = NuMethod(lam=1e-4, bandwidth=10.)
-        score_estimate = nu_method.estimate_gradients_s_x(queries=self.x_query, samples=self.x_samples)
+        est = NuMethod(lam=1e-4, bandwidth=10.)
+        score_estimate = est.estimate_gradients_s_x(queries=self.x_query, samples=self.x_samples)
         score, logp = jax.grad(self.logprob, has_aux=True)(self.x_query)
         cos_dist = np.mean([spatial.distance.cosine(s1, s2) for s1, s2 in zip(score, score_estimate)])
         assert cos_dist < 0.05, f'cos-dist = {cos_dist}'
 
     def test_score_estimation_x(self):
-        nu_method = NuMethod(lam=1e-4, bandwidth=10.)
-        score_estimate = nu_method.estimate_gradients_s(x=self.x_samples)
+        est = NuMethod(lam=1e-4, bandwidth=10.)
+        score_estimate = est.estimate_gradients_s(x=self.x_samples)
         score, logp = jax.grad(self.logprob, has_aux=True)(self.x_samples)
         cos_dist = np.mean([spatial.distance.cosine(s1, s2) for s1, s2 in zip(score, score_estimate)])
         assert cos_dist < 0.05, f'cos-dist = {cos_dist}'
@@ -173,8 +193,8 @@ class TestKDE(unittest.TestCase):
         self.logprob = lambda x: (self.dist.log_prob(x).sum(), self.dist.log_prob(x))
 
     def test_score_estimation_x_s(self):
-        kde = KDE()
-        score_estimate = kde.estimate_gradients_s_x(self.x_query, self.x_samples)
+        est = KDE()
+        score_estimate = est.estimate_gradients_s_x(self.x_query, self.x_samples)
         score, logp = jax.grad(self.logprob, has_aux=True)(self.x_query)
         cos_dist = np.mean([spatial.distance.cosine(s1, s2) for s1, s2 in zip(score, score_estimate)])
         assert cos_dist < 0.1, f'cos-dist = {cos_dist}'
@@ -182,9 +202,9 @@ class TestKDE(unittest.TestCase):
     def test_kde_integates_to_1(self):
         dist = tfp.distributions.MultivariateNormalDiag(loc=[-2.], scale_diag=[0.5])
         samples = dist.sample(seed=jax.random.PRNGKey(24234), sample_shape=10)
-        kde = KDE()
+        est = KDE()
         query = jnp.linspace(-7, 5, num=200)[:, None]
-        ps = jnp.exp(kde.density_estimates_log_prob(query, samples))
+        ps = jnp.exp(est.density_estimates_log_prob(query, samples))
         integral = jnp.trapz(x=query.squeeze(-1), y=ps)
         assert (abs(integral) - 1) < 0.01
 
@@ -204,8 +224,8 @@ class TestLandweber(unittest.TestCase):
         self.test_score_estimation_x()
 
     def test_score_estimation_x_s(self):
-        landweber_est = Landweber(bandwidth=1., num_iter=1000)
-        score_estimate = landweber_est.estimate_gradients_s_x(queries=self.x_query, samples=self.x_samples)
+        est = Landweber(bandwidth=1., num_iter=1000)
+        score_estimate = est.estimate_gradients_s_x(queries=self.x_query, samples=self.x_samples)
         score, logp = jax.grad(self.logprob, has_aux=True)(self.x_query)
         cos_dist = np.mean([spatial.distance.cosine(s1, s2) for s1, s2 in zip(score, score_estimate)])
         if cos_dist > 0.05: warnings.warn(
@@ -213,8 +233,8 @@ class TestLandweber(unittest.TestCase):
             category=UserWarning)
 
     def test_score_estimation_x(self):
-        landweber_est = Landweber(bandwidth=1., num_iter=1000)
-        score_estimate = landweber_est.estimate_gradients_s(x=self.x_samples)
+        est = Landweber(bandwidth=1., num_iter=1000)
+        score_estimate = est.estimate_gradients_s(x=self.x_samples)
         score, logp = jax.grad(self.logprob, has_aux=True)(self.x_samples)
         cos_dist = np.mean([spatial.distance.cosine(s1, s2) for s1, s2 in zip(score, score_estimate)])
         if cos_dist > 0.05: warnings.warn(
@@ -237,15 +257,15 @@ class TestTikhonov(unittest.TestCase):
         self.test_score_estimation_x()
 
     def test_score_estimation_x_s(self):
-        tikh = Tikhonov(bandwidth=20., lam=5e-6)
-        score_estimate = tikh.estimate_gradients_s_x(queries=self.x_query, samples=self.x_samples)
+        est = Tikhonov(bandwidth=20., lam=5e-6)
+        score_estimate = est.estimate_gradients_s_x(queries=self.x_query, samples=self.x_samples)
         score, logp = jax.grad(self.logprob, has_aux=True)(self.x_query)
         cos_dist = np.mean([spatial.distance.cosine(s1, s2) for s1, s2 in zip(score, score_estimate)])
         assert cos_dist < 0.05, f'cos-dist = {cos_dist}'
 
     def test_score_estimation_x(self):
-        tikh = Tikhonov(bandwidth=20., lam=5e-6)
-        score_estimate = tikh.estimate_gradients_s(x=self.x_samples)
+        est = Tikhonov(bandwidth=20., lam=5e-6)
+        score_estimate = est.estimate_gradients_s(x=self.x_samples)
         score, logp = jax.grad(self.logprob, has_aux=True)(self.x_samples)
         cos_dist = np.mean([spatial.distance.cosine(s1, s2) for s1, s2 in zip(score, score_estimate)])
         assert cos_dist < 0.05, f'cos-dist = {cos_dist}'

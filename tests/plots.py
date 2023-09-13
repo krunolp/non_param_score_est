@@ -4,13 +4,7 @@ from tensorflow_probability.substrates import jax as tfp
 import jax
 import jax.numpy as jnp
 
-from score_estimation.estimators.tikhonov import Tikhonov
-from score_estimation.estimators.ssge import SSGE
-from score_estimation.estimators.nu_method import NuMethod
-from score_estimation.estimators.kde import KDE
-from score_estimation.estimators.landweber import Landweber
-from score_estimation.estimators.tikhonov import Tikhonov
-from score_estimation.estimators.abstract import GramMatrixMixin
+from score_estimation.estimators import *
 
 
 class plotOneDim:

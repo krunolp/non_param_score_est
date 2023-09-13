@@ -1,5 +1,7 @@
 # Ignore Python bytecode files and cache directories
 *.pyc
 __pycache__/
+score_estimation/estimators/__pycache__/
+score_estimation/matrix_kernels/__pycache__/
 tests/.pytest_cache
 .idea/
