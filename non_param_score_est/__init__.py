@@ -6,7 +6,7 @@ More information is available at https://github.com/krunolp/non_param_score_est
 import sys
 
 #: The release version
-version = '0.0.1'
+version = '1.0.0'
 __version__ = version
 
 MIN_PYTHON_VERSION = 3, 8
