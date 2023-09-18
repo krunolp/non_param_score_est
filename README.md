@@ -1,100 +1,62 @@
-# score_estim
-Package for score estimation
+# Non-parametric score estimation
 
-
-Amended code from https://github.com/miskcoo/kscore.git.
-
-
-# python-package-template
-
-This is a repository for the score_estim Python package.
-
-## In this README :point_down:
-
-- [Features](#features)
-- [Usage](#usage)
-  - [Initial setup](#initial-setup)
-- [FAQ](#faq)
-- [Contributing](#contributing)
-
-## Features
-
-This template repository comes with all of the boilerplate needed for:
-
-⚙️ Robust (and free) CI with [GitHub Actions](https://github.com/features/actions):
-  - Unit tests ran with [PyTest](https://docs.pytest.org) against multiple Python versions and operating systems.
-  - Type checking with [mypy](https://github.com/python/mypy).
-  - Linting with [ruff](https://astral.sh/ruff).
-  - Formatting with [isort](https://pycqa.github.io/isort/) and [black](https://black.readthedocs.io/en/stable/).
-
-🤖 [Dependabot](https://github.blog/2020-06-01-keep-all-your-packages-up-to-date-with-dependabot/) configuration to keep your dependencies up-to-date.
-
-📄 Great looking API documentation built using [Sphinx](https://www.sphinx-doc.org/en/master/) (run `make docs` to preview).
-
-🚀 Automatic GitHub and PyPI releases. Just follow the steps in [`RELEASE_PROCESS.md`](./RELEASE_PROCESS.md) to trigger a new release.
+This is a repository for the [non_param_score_estim](https://pypi.org/project/non-param-score-est/) Python package.
 
 ## Usage
 
 ### Initial setup
 
-1. [Create a new repository](https://github.com/allenai/python-package-template/generate) from this template with the desired name of your project.
+To install the package, you are required to have a Python 3.10 or newer environment. Then, simply run:
 
-    *Your project name (i.e. the name of the repository) and the name of the corresponding Python package don't necessarily need to match, but you might want to check on [PyPI](https://pypi.org/) first to see if the package name you want is already taken.*
+ ```
+pip install non_param_score_est
+ ```
 
-2. Create a Python 3.8 or newer virtual environment.
+### Choosing the estimator
 
-    *If you're not sure how to create a suitable Python environment, the easiest way is using [Miniconda](https://docs.conda.io/en/latest/miniconda.html). On a Mac, for example, you can install Miniconda using [Homebrew](https://brew.sh/):*
-
-    ```
-    brew install miniconda
-    ```
-
-    *Then you can create and activate a new Python environment by running:*
-
-    ```
-    conda create -n my-package python=3.9
-    conda activate my-package
-    ```
-
-3. Now that you have a suitable Python environment, you're ready to personalize this repository. Just run:
-
-    ```
-    pip install -r setup-requirements.txt
-    python scripts/personalize.py
-    ```
-
-    And then follow the prompts.
-
-    :pencil: *NOTE: This script will overwrite the README in your repository.*
-
-4. Commit and push your changes, then make sure all GitHub Actions jobs pass.
-
-5. (Optional) If you plan on publishing your package to PyPI, add repository secrets for `PYPI_USERNAME` and `PYPI_PASSWORD`. To add these, go to "Settings" > "Secrets" > "Actions", and then click "New repository secret".
-
-    *If you don't have PyPI account yet, you can [create one for free](https://pypi.org/account/register/).*
-
-6. (Optional) If you want to deploy your API docs to [readthedocs.org](https://readthedocs.org), go to the [readthedocs dashboard](https://readthedocs.org/dashboard/import/?) and import your new project.
-
-    Then click on the "Admin" button, navigate to "Automation Rules" in the sidebar, click "Add Rule", and then enter the following fields:
-
-    - **Description:** Publish new versions from tags
-    - **Match:** Custom Match
-    - **Custom match:** v[vV]
-    - **Version:** Tag
-    - **Action:** Activate version
-
-    Then hit "Save".
-
-    *After your first release, the docs will automatically be published to [your-project-name.readthedocs.io](https://your-project-name.readthedocs.io/).*
+The following estimators are available (and the corresponding import names):
 
 
-## FAQ
+| Estimator                         | Import Name                   |
+|-----------------------------------|:------------------------------|
+| Tikhonov regularization           | Tikhonov                      |
+| NKEF (with rate 0.75)             | Tikhonov(subsample_rate=0.75) |
+| Kernel density estimator          | KDE                           |
+| Landweber iteration               | Landweber                     |
+| Nu-method                         | NuMethod                      |
+| Spectral Stein gradient estimator | SSGE                          |
+| Stein estimator                   | Stein                         |
 
-#### Should I use this template even if I don't want to publish my package?
+### Utilising the estimators
 
-Absolutely! If you don't want to publish your package, just delete the `docs/` directory and the `release` job in [`.github/workflows/main.yml`](https://github.com/allenai/python-package-template/blob/main/.github/workflows/main.yml).
+To use the estimators in your code, simply import the estimator and call the `estimate_gradients_x_s` or `estimate_gradients_s` function. For example, to use the Tikhonov estimator, you would write:
+ ```
+ import numpy as np
+import non_param_score_est
+from non_param_score_est.estimators import Tikhonov
+
+samples = np.random.normal(1000)
+est = Tikhonov(bandwidth=1., lam=1e-4)
+
+score_estimate = est.estimate_gradients_s(samples)
+ ```
 
 ## Contributing
 
-If you find a bug :bug:, please open a [bug report](https://github.com/allenai/python-package-template/issues/new?assignees=&labels=bug&template=bug_report.md&title=).
-If you have an idea for an improvement or new feature :rocket:, please open a [feature request](https://github.com/allenai/python-package-template/issues/new?assignees=&labels=Feature+request&template=feature_request.md&title=).
+We welcome contributions! Please follow these guidelines if you'd like to contribute to the project:
+
+1. Fork the repository and clone it to your local machine.
+2. Create a new branch for your feature or bug fix.
+3. Make your changes and ensure that tests pass.
+4. Submit a pull request with a clear title and description.
+
+## License
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+The code in [JAX](https://github.com/google/jax) was inspred by the [repository](https://github.com/miskcoo/kscore.git) of the [Nonparametric Score Estimators](https://arxiv.org/abs/2005.10099) paper, by Yuhao Zhou, Jiaxin Shi, Jun Zhu. 
+
+## Contact
+Krunoslav Lehman Pavasovic
+Email: krunolp@gmail.com
+GitHub: krunolp
