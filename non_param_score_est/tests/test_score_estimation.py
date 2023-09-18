@@ -7,8 +7,8 @@ import unittest
 import warnings
 import numpy as np
 
-from score_estimation.estimators import *
-from score_estimation.estimators.abstract import GramMatrixMixin
+from non_param_score_est.estimators import *
+from non_param_score_est.estimators.abstract import GramMatrixMixin
 
 
 class TestGramMatrixMixin(unittest.TestCase):

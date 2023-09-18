@@ -8,9 +8,9 @@ import jax.numpy as jnp
 import haiku as hk
 
 from typing import Optional
-from score_estimation.matrix_kernels.curlfree_kernel import CurlFreeIMQKernel, CurlFreeSEKernel
-from score_estimation.estimators.abstract import AbstractScoreEstimator
-from score_estimation.matrix_kernels.utils import random_choice, conjugate_gradient
+from non_param_score_est.matrix_kernels.curlfree_kernel import CurlFreeIMQKernel, CurlFreeSEKernel
+from non_param_score_est.estimators.abstract import AbstractScoreEstimator
+from non_param_score_est.matrix_kernels.utils import random_choice, conjugate_gradient
 
 
 class Tikhonov(AbstractScoreEstimator):

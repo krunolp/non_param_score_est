@@ -4,7 +4,7 @@ from tensorflow_probability.substrates import jax as tfp
 import jax
 import jax.numpy as jnp
 
-from score_estimation.estimators import *
+from non_param_score_est.estimators import *
 
 
 class plotOneDim:

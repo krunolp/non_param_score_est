@@ -5,8 +5,8 @@ from __future__ import print_function
 import jax
 import jax.numpy as jnp
 
-from score_estimation.matrix_kernels.diagonal_kernel import DiagonalIMQKernel
-from score_estimation.estimators.abstract import AbstractScoreEstimator
+from non_param_score_est.matrix_kernels.diagonal_kernel import DiagonalIMQKernel
+from non_param_score_est.estimators.abstract import AbstractScoreEstimator
 
 
 class Stein(AbstractScoreEstimator):

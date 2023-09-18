@@ -5,7 +5,7 @@ import jax
 from typing import Optional, Tuple
 from jax import numpy as jnp
 from .utils import median_heuristic
-from score_estimation.matrix_kernels.abstract import DiagonalKernel
+from non_param_score_est.matrix_kernels.abstract import DiagonalKernel
 
 
 class DiagonalGaussian(DiagonalKernel):

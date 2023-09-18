@@ -1,7 +1,14 @@
 # Ignore Python bytecode files and cache directories
 *.pyc
 __pycache__/
-score_estimation/estimators/__pycache__/
-score_estimation/matrix_kernels/__pycache__/
-tests/.pytest_cache
+non_param_score_est/estimators/__pycache__/
+non_param_score_est/matrix_kernels/__pycache__/
+non_param_score_est/tests/.pytest_cache
 .idea/
+/non_param_score_est.egg-info/
+.pytest_cache/
+.coverage
+/_build/
+/dist/
+/.coveragerc
+.DS_Store
