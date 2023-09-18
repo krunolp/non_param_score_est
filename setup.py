@@ -28,10 +28,10 @@ setup_info = dict(
     version=info['version'],
     author='Krunoslav Lehman Pavasovic',
     author_email='krunolp@gmail.com',
-    url='https://github.com/krunolp/score_estim',
+    url='https://github.com/krunolp/non_param_score_est',
     project_urls={
-        'Source': 'https://github.com/krunolp/score_estim',
-        'Tracker': 'https://github.com/krunolp/score_estim/issues',
+        'Source': 'https://github.com/krunolp/non_param_score_est',
+        'Tracker': 'https://github.com/krunolp/non_param_score_est/issues',
     },
     description='Non parametric score function estimation library',
     long_description=open('README.md').read(),
