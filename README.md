@@ -78,7 +78,7 @@ We welcome contributions! Please follow these guidelines if you'd like to contri
 4. Submit a pull request with a clear title and description.
 
 ## License
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 The code in [JAX](https://github.com/google/jax) was inspired by the [repository](https://github.com/miskcoo/kscore.git) of the [Nonparametric Score Estimators](https://arxiv.org/abs/2005.10099) paper, by Yuhao Zhou, Jiaxin Shi, Jun Zhu. 
