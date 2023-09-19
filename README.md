@@ -6,7 +6,7 @@ Welcome to the `non_param_score_est` Python package ([GitHub repository](https:/
 
 ### Initial setup
 
-To install the package, you are required to have a Python 3.10 or newer environment. Then, simply run:
+To install the package, it is advised to have a Python 3.10 or newer environment. Then, simply run:
 
  ```
 pip install non_param_score_est
@@ -20,7 +20,7 @@ The following estimators are available (and the corresponding import names):
 | Estimator                         | Import Name                   |
 |-----------------------------------|:------------------------------|
 | Tikhonov regularization           | Tikhonov                      |
-| NKEF (with rate 0.75)             | Tikhonov(subsample_rate=0.75) |
+| NKEF (e.g., rate 0.75)            | Tikhonov(subsample_rate=0.75) |
 | Kernel density estimator          | KDE                           |
 | Landweber iteration               | Landweber                     |
 | Nu-method                         | NuMethod                      |
